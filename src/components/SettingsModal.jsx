@@ -14,7 +14,7 @@ const THEMES = [
     { id: 'ukinami', name: 'Pixel Vibes', src: '/assets/videos/ukinami-yuzuhas-pixelated-lofi-moewalls-com.mp4' },
 ];
 
-const TIMER_OPTIONS = Array.from({ length: 12 }, (_, i) => (i + 1) * 5); // 5, 10, ... 60
+
 
 const SettingsModal = ({ isOpen, onClose }) => {
     const { theme, setTheme, pomodoroSettings, setPomodoroSettings } = useStore();

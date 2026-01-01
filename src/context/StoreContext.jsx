@@ -52,7 +52,7 @@ export const StoreProvider = ({ children }) => {
     // Initial Geolocation fetch
     useEffect(() => {
         if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition((position) => {
+            navigator.geolocation.getCurrentPosition(() => {
                 // Here we could use an API to get timezone from lat/long if needed, 
                 // but browser usually provides correct local timezone.
                 // We'll keep the browser default unless user overrides.

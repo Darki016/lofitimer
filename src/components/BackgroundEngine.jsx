@@ -1,4 +1,4 @@
-```javascript
+
 import React, { useEffect, useRef } from 'react';
 import { useStore } from '../context/StoreContext';
 
@@ -61,4 +61,4 @@ const BackgroundEngine = () => {
 };
 
 export default BackgroundEngine;
-```
+

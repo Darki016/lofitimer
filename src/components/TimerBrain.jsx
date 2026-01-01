@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useStore } from '../context/StoreContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Pause, RotateCcw, X, Pencil, Maximize2 } from 'lucide-react';
+import { Play, Pause, RotateCcw, X } from 'lucide-react';
 
 const MODES = {
     POMODORO: 'pomodoro',
