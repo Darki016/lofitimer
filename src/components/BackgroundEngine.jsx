@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '../context/StoreContext';
 
@@ -15,6 +15,24 @@ const themes = {
 
 const BackgroundEngine = () => {
     const { theme } = useStore();
+    const videoRef = useRef(null);
+
+    // Safety check: ensure theme exists, otherwise fallback to rain
+    const videoSrc = themes[theme] || themes.rain;
+
+    useEffect(() => {
+        // Force play on mount/update to bypass some browser autoplay policies
+        if (videoRef.current) {
+            videoRef.current.load(); // Reload video source
+            const playPromise = videoRef.current.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.log("Autoplay prevented:", error);
+                    // Usually interaction will unlock this, but we log it.
+                });
+            }
+        }
+    }, [theme]);
 
     return (
         <div className="fixed inset-0 w-full h-full -z-50 overflow-hidden bg-black">
@@ -28,12 +46,13 @@ const BackgroundEngine = () => {
                     className="absolute inset-0 w-full h-full"
                 >
                     <video
+                        ref={videoRef}
                         autoPlay
                         loop
                         muted
                         playsInline
                         className="w-full h-full object-cover"
-                        src={themes[theme]}
+                        src={videoSrc}
                     />
                 </motion.div>
             </AnimatePresence>
