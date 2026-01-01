@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ListTodo, StickyNote, BarChart2, Music2, X, Plus, Check, Trash2 } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
-import { X, Check, Plus, Trash2, StickyNote, ListTodo } from 'lucide-react';
+import StatsDisplay from './StatsDisplay';
+import AmbientMixer from './AmbientMixer';
 
 const ProductivityHub = ({ isOpen, onClose }) => {
     const { todos, setTodos, notes, setNotes } = useStore();
@@ -22,6 +24,13 @@ const ProductivityHub = ({ isOpen, onClose }) => {
     const deleteTodo = (id) => {
         setTodos(todos.filter(t => t.id !== id));
     };
+
+    const tabs = [
+        { id: 'todo', icon: ListTodo, label: 'Tasks' },
+        { id: 'sounds', icon: Music2, label: 'Sounds' },
+        { id: 'stats', icon: BarChart2, label: 'Stats' },
+        { id: 'notes', icon: StickyNote, label: 'Notes' },
+    ];
 
     return (
         <AnimatePresence>
@@ -54,23 +63,22 @@ const ProductivityHub = ({ isOpen, onClose }) => {
 
                         {/* Tabs */}
                         <div className="flex p-1 bg-white/5 rounded-xl mb-6">
-                            <button
-                                onClick={() => setActiveTab('todo')}
-                                className={`flex-1 py-2 rounded-lg flex items-center justify-center gap-2 transition ${activeTab === 'todo' ? 'bg-white/10 text-white shadow-lg' : 'text-white/50 hover:text-white'}`}
-                            >
-                                <ListTodo size={16} /> To-Do
-                            </button>
-                            <button
-                                onClick={() => setActiveTab('notes')}
-                                className={`flex-1 py-2 rounded-lg flex items-center justify-center gap-2 transition ${activeTab === 'notes' ? 'bg-white/10 text-white shadow-lg' : 'text-white/50 hover:text-white'}`}
-                            >
-                                <StickyNote size={16} /> Notes
-                            </button>
+                            {tabs.map(tab => (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => setActiveTab(tab.id)}
+                                    className={`flex-1 py-2 rounded-lg flex items-center justify-center gap-2 transition text-xs font-medium ${activeTab === tab.id ? 'bg-white/10 text-white shadow-lg' : 'text-white/50 hover:text-white'
+                                        }`}
+                                    title={tab.label}
+                                >
+                                    <tab.icon size={16} />
+                                </button>
+                            ))}
                         </div>
 
                         {/* Content */}
-                        <div className="flex-1 overflow-y-auto no-scrollbar">
-                            {activeTab === 'todo' ? (
+                        <div className="flex-1 overflow-y-auto no-scrollbar pr-1">
+                            {activeTab === 'todo' && (
                                 <div className="space-y-4">
                                     <form onSubmit={addTodo} className="relative">
                                         <input
@@ -78,7 +86,7 @@ const ProductivityHub = ({ isOpen, onClose }) => {
                                             placeholder="Add a task..."
                                             value={newTodo}
                                             onChange={(e) => setNewTodo(e.target.value)}
-                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-white/30 transition placeholder:text-white/30"
+                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-white/30 transition placeholder:text-white/30 text-sm"
                                         />
                                         <button type="submit" className="absolute right-2 top-2 p-1 bg-white text-black rounded-lg hover:bg-white/90 transition">
                                             <Plus size={20} />
@@ -87,7 +95,7 @@ const ProductivityHub = ({ isOpen, onClose }) => {
 
                                     <div className="space-y-2">
                                         <AnimatePresence mode='popLayout'>
-                                            {todos.length === 0 && <p className="text-center text-white/30 mt-10">No tasks yet. Stay focused.</p>}
+                                            {todos.length === 0 && <p className="text-center text-white/30 mt-10 text-sm">No tasks yet. Stay focused.</p>}
                                             {todos.map(todo => (
                                                 <motion.div
                                                     key={todo.id}
@@ -103,11 +111,9 @@ const ProductivityHub = ({ isOpen, onClose }) => {
                                                     >
                                                         {todo.completed && <Check size={12} className="text-black" />}
                                                     </button>
-
                                                     <span className={`flex-1 text-sm ${todo.completed ? 'line-through text-white/40' : 'text-white/90'}`}>
                                                         {todo.text}
                                                     </span>
-
                                                     <button
                                                         onClick={() => deleteTodo(todo.id)}
                                                         className="opacity-0 group-hover:opacity-100 text-white/40 hover:text-red-400 transition"
@@ -119,18 +125,20 @@ const ProductivityHub = ({ isOpen, onClose }) => {
                                         </AnimatePresence>
                                     </div>
                                 </div>
-                            ) : (
-                                <div className="h-full">
-                                    <textarea
-                                        value={notes}
-                                        onChange={(e) => setNotes(e.target.value)}
-                                        placeholder="Capture your thoughts..."
-                                        className="w-full h-full bg-transparent resize-none outline-none font-mono text-sm leading-relaxed text-white/80 placeholder:text-white/20"
-                                    />
-                                </div>
+                            )}
+
+                            {activeTab === 'sounds' && <AmbientMixer />}
+                            {activeTab === 'stats' && <StatsDisplay />}
+
+                            {activeTab === 'notes' && (
+                                <textarea
+                                    value={notes}
+                                    onChange={(e) => setNotes(e.target.value)}
+                                    placeholder="Capture your thoughts..."
+                                    className="w-full h-full bg-transparent resize-none outline-none font-mono text-sm leading-relaxed text-white/80 placeholder:text-white/20"
+                                />
                             )}
                         </div>
-
                     </motion.div>
                 </>
             )}

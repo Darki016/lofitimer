@@ -22,7 +22,8 @@ const TimerBrain = () => {
         timerMode, setTimerMode,
         timeLeft, setTimeLeft,
         isActive, setIsActive,
-        pomodoroSettings
+        pomodoroSettings,
+        updateStats
     } = useStore();
 
     const [pomodoroState, setPomodoroState] = useState('focus');
@@ -90,6 +91,7 @@ const TimerBrain = () => {
     const handleTimerComplete = () => {
         if (timerMode === MODES.POMODORO) {
             if (pomodoroState === 'focus') {
+                updateStats(pomodoroSettings.focus); // Track stats
                 const newSessions = completedSessions + 1;
                 setCompletedSessions(newSessions);
                 if (newSessions % 4 === 0) {
