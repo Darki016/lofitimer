@@ -1,5 +1,5 @@
+```javascript
 import React, { useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '../context/StoreContext';
 
 const themes = {
@@ -15,52 +15,50 @@ const themes = {
 
 const BackgroundEngine = () => {
     const { theme } = useStore();
-    const videoRef = useRef(null);
-
-    // Safety check: ensure theme exists, otherwise fallback to rain
-    const videoSrc = themes[theme] || themes.rain;
+    const videoRefs = useRef({});
 
     useEffect(() => {
-        // Force play on mount/update to bypass some browser autoplay policies
-        if (videoRef.current) {
-            videoRef.current.load(); // Reload video source
-            const playPromise = videoRef.current.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    console.log("Autoplay prevented:", error);
-                    // Usually interaction will unlock this, but we log it.
-                });
+        // Manage playback efficiently: Only play the active one, pause others
+        Object.keys(themes).forEach(key => {
+            const video = videoRefs.current[key];
+            if (video) {
+                if (key === theme) {
+                    video.play().catch(e => console.log('Play prevented:', e));
+                } else {
+                    video.pause();
+                }
             }
-        }
+        });
     }, [theme]);
 
     return (
         <div className="fixed inset-0 w-full h-full -z-50 overflow-hidden bg-black">
-            <AnimatePresence mode="wait">
-                <motion.div
-                    key={theme}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 1.5 }}
-                    className="absolute inset-0 w-full h-full"
+            {Object.entries(themes).map(([key, src]) => (
+                <div
+                    key={key}
+                    className="absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out"
+                    style={{
+                        opacity: theme === key ? 1 : 0,
+                        zIndex: theme === key ? 1 : 0
+                    }}
                 >
                     <video
-                        ref={videoRef}
-                        autoPlay
+                        ref={el => videoRefs.current[key] = el}
                         loop
                         muted
                         playsInline
+                        preload="auto"
                         className="w-full h-full object-cover"
-                        src={videoSrc}
+                        src={src}
                     />
-                </motion.div>
-            </AnimatePresence>
+                </div>
+            ))}
 
             {/* Dark Overlay for Readability */}
-            <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] z-10" />
         </div>
     );
 };
 
 export default BackgroundEngine;
+```
