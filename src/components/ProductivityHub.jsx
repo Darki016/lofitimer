@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ListTodo, StickyNote, BarChart2, Music2, X, Plus, Check, Trash2 } from 'lucide-react';
+import { ListTodo, StickyNote, X, Plus, Check, Trash2 } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
-import StatsDisplay from './StatsDisplay';
-import AmbientMixer from './AmbientMixer';
 
 const ProductivityHub = ({ isOpen, onClose }) => {
     const { todos, setTodos, notes, setNotes } = useStore();
@@ -27,8 +25,6 @@ const ProductivityHub = ({ isOpen, onClose }) => {
 
     const tabs = [
         { id: 'todo', icon: ListTodo, label: 'Tasks' },
-        { id: 'sounds', icon: Music2, label: 'Sounds' },
-        { id: 'stats', icon: BarChart2, label: 'Stats' },
         { id: 'notes', icon: StickyNote, label: 'Notes' },
     ];
 
@@ -126,9 +122,6 @@ const ProductivityHub = ({ isOpen, onClose }) => {
                                     </div>
                                 </div>
                             )}
-
-                            {activeTab === 'sounds' && <AmbientMixer />}
-                            {activeTab === 'stats' && <StatsDisplay />}
 
                             {activeTab === 'notes' && (
                                 <textarea

@@ -61,42 +61,7 @@ export const StoreProvider = ({ children }) => {
     }, []);
 
 
-    // Stats State (Persisted)
-    const [stats, setStats] = useState(() => JSON.parse(localStorage.getItem('stats')) || {
-        daily: { sessions: 0, minutes: 0, lastDate: new Date().toDateString() },
-        total: { sessions: 0, minutes: 0 }
-    });
 
-    // Check if new day
-    useEffect(() => {
-        const today = new Date().toDateString();
-        if (stats.daily.lastDate !== today) {
-            setStats(prev => ({
-                ...prev,
-                daily: { sessions: 0, minutes: 0, lastDate: today }
-            }));
-        }
-    }, []);
-
-    useEffect(() => {
-        localStorage.setItem('stats', JSON.stringify(stats));
-    }, [stats]);
-
-    const updateStats = (minutes) => {
-        setStats(prev => ({
-            daily: {
-                ...prev.daily,
-                sessions: prev.daily.sessions + 1,
-                minutes: prev.daily.minutes + minutes,
-                lastDate: new Date().toDateString()
-            },
-            total: {
-                ...prev.total,
-                sessions: prev.total.sessions + 1,
-                minutes: prev.total.minutes + minutes
-            }
-        }));
-    };
 
     const value = {
         theme, setTheme,
@@ -109,8 +74,7 @@ export const StoreProvider = ({ children }) => {
         notes, setNotes,
         todos, setTodos,
         timeZone, setTimeZone,
-        pomodoroSettings, setPomodoroSettings,
-        stats, updateStats
+        pomodoroSettings, setPomodoroSettings
     };
 
     return (
